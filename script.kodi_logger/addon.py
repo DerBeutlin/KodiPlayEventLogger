@@ -1,10 +1,17 @@
-import xbmcgui
-import xbmcplugin
 import xbmc
 import time
+import xbmcaddon
+import os
 if __name__ == '__main__':
-    logfile = '/home/max/test.log'
     monitor = xbmc.Monitor()
+    addon = xbmcaddon.Addon()
+
+    def getLogFilePath():
+        folder = addon.getSetting('log_folder')
+        filename = addon.getSetting('log_filename')
+        if not os.path.isdir(folder):
+            return False
+        return os.path.join(folder, filename)
 
     class MyPlayer(xbmc.Player):
         def write_Event_to_file(self, event):
@@ -16,9 +23,11 @@ if __name__ == '__main__':
             else:
                 title = ''
                 filename = ''
-            with open('/home/max/test.log', 'a') as f:
-                f.write('%d; ' % int(time.time()) + event + ';' + type + ';' +
-                        title + ';' + filename + '\n')
+            path = getLogFilePath()
+            if path:
+                with open(path, 'a') as f:
+                    f.write('%d; ' % int(time.time()) + event + ';' + type + ';' +
+                            title + ';' + filename + '\n')
 
         def getTypePlaying(self):
             if not self.isPlaying():

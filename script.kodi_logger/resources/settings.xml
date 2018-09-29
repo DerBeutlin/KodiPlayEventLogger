@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <category label="32001">
+    <setting label="32011" type="folder" id="log_folder" source="auto" option="writeable"/>
+    <setting label="32012" type="text" id="log_filename" default="kodi.log" />
+    </category>
+</settings>
