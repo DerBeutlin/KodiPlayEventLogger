@@ -20,10 +20,13 @@ msgid "General"
 msgstr ""
 
 msgctxt "#32011"
-msgid "Folder to store the logfile"
+msgid "Folder to store the logfiles"
 msgstr ""
 
-
 msgctxt "#32012"
-msgid "Filename of the logfile"
+msgid "Filename of the Video-Logfile"
+msgstr ""
+
+msgctxt "#32013"
+msgid "Filename of the Audio-Logfile"
 msgstr ""

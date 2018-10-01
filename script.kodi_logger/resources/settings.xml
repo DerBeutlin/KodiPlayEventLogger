@@ -2,6 +2,7 @@
 <settings>
     <category label="32001">
     <setting label="32011" type="folder" id="log_folder" source="auto" option="writeable"/>
-    <setting label="32012" type="text" id="log_filename" default="kodi.log" />
+    <setting label="32012" type="text" id="video_filename" default="video.log" />
+    <setting label="32013" type="text" id="audio_filename" default="audio.log" />
     </category>
 </settings>

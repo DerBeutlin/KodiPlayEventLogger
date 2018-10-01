@@ -6,28 +6,40 @@ if __name__ == '__main__':
     monitor = xbmc.Monitor()
     addon = xbmcaddon.Addon()
 
-    def getLogFilePath():
+    def getLogFilePath(type_playing):
         folder = addon.getSetting('log_folder')
-        filename = addon.getSetting('log_filename')
+        filename = addon.getSetting('%s_filename' % type_playing)
         if not os.path.isdir(folder):
             return False
         return os.path.join(folder, filename)
 
     class MyPlayer(xbmc.Player):
         def write_Event_to_file(self, event):
-            type = self.getTypePlaying()
+            type_playing = self.getTypePlaying()
             info_tag = self.getInfoTag()
-            if type and type != 'other':
-                title = info_tag.getTitle()
-                filename = self.getPlayingFile()
-            else:
-                title = ''
-                filename = ''
-            path = getLogFilePath()
+            if not type_playing:
+                return None
+            info = [
+                str(int(time.time())), event,
+                str(int(self.getTime())),
+                str(int(self.getTotalTime())),
+                self.getPlayingFile(),
+                info_tag.getTitle()
+            ]
+            if type_playing == 'audio':
+                info.append(info_tag.getArtist())
+                info.append(info_tag.getAlbum())
+            elif type_playing == 'video':
+                info.append(info_tag.getMediaType())
+                info.append(info_tag.getTVShowTitle())
+                info.append(str(info_tag.getSeason()))
+                info.append(str(info_tag.getEpisode()))
+            path = getLogFilePath(type_playing)
             if path:
                 with open(path, 'a') as f:
-                    f.write('%d; ' % int(time.time()) + event + ';' + type + ';' +
-                            title + ';' + filename + '\n')
+                    string = ';'.join(info)
+                    string += ';\n'
+                    f.write(string)
 
         def getTypePlaying(self):
             if not self.isPlaying():
@@ -36,18 +48,14 @@ if __name__ == '__main__':
                 return 'video'
             if self.isPlayingAudio():
                 return 'audio'
-            if self.isPlayingRDS():
-                return 'rds'
-            return 'other'
+            return None
 
         def getInfoTag(self):
-            type = self.getTypePlaying()
-            if type == 'video':
+            type_playing = self.getTypePlaying()
+            if type_playing == 'video':
                 return self.getVideoInfoTag()
-            elif type == 'audio':
+            elif type_playing == 'audio':
                 return self.getMusicInfoTag()
-            elif type == 'rds':
-                return self.getRDSInfoTag()
 
         def onPlayBackStopped(self):
             self.write_Event_to_file('stopped')
